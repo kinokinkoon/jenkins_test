@@ -1,9 +1,21 @@
 pipeline {
-    agent { docker { image 'golang:1.17.5-alpine' } }
+    agent any
     stages {
-        stage('build') {
+        stage('Build') {
             steps {
-                sh 'go version'
+                sh 'make package'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'make check'
+            }
+        }
+        stage('Deploy') {
+            when { tag "release-*" }
+            steps {
+                echo 'Deploying only because this commit is tagged...'
+                sh 'make deploy'
             }
         }
     }
